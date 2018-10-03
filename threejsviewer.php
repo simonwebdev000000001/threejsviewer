@@ -40,7 +40,7 @@ class Threejsviewer
     {
         add_action('admin_menu', 'test_plugin_setup_menu');
         //add_action('parse_request', 'vm_parse_request');
-       // add_filter( 'page_template', 'wpa3396_page_template' );
+       //add_filter( 'page_template', 'wpa3396_page_template' );
        // add_filter( 'init', 'wpa3396_page_template' );
 
        //add_action( 'wp_router_generate_routes', 'bl_add_routes', 20 );
@@ -59,9 +59,7 @@ class Threejsviewer
 function my_ajax_action() {
 	 global $wpdb; // this is how you get access to the database
 
-	 $title = ( $_POST['title'] );
-
-	//$whatever += 10;
+	 $title = ( $_POST['title'] ); 
     $table_name = $wpdb->prefix . Threejsviewer::$TABLE_NAME;
 
     ($wpdb->insert( 
@@ -219,7 +217,7 @@ function test_plugin_setup_menu(){
 function test_init(){
     require_once( ABSPATH . 'wp-content/plugins/threejsviewer/loadFiles.php' );
     require_once( ABSPATH . 'wp-content/plugins/threejsviewer/viewer/listOfMenuItems.php' );
-
+    
     test_handle_post();
 
     $soundFiles =  load_files() ;
@@ -227,7 +225,7 @@ function test_init(){
         echo "
         <hr/>
         <h3>List of Sound Files</h3>
-        <ul>
+        <ul =\"listofSounds\">
     "; 
      
     foreach ( $soundFiles as $_filePath ){

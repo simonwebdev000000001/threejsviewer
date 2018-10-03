@@ -12,9 +12,14 @@ style="color: rgb(255, 255, 255); background-color: rgb(0, 0, 0); display: block
 <script>
     document.querySelector('#cn-accept-cookie').addEventListener('click',function(){
         document.querySelector('#cookie-notice').style.display ='none';
+        document.querySelector('.copyright').style.bottom = '0px';
     })
+    document.addEventListener("DOMContentLoaded", function(){
+          //document.querySelector('.copyright').style.bottom = '40px';
+        });
 </script>
 <style>
+ 
     #cookie-notice {
         bottom: 0;
     position: fixed;

@@ -10696,7 +10696,9 @@ request.send(); */
 	    path: '/'
 	  }
 	].concat( [].map.call(document.querySelector('#menu_items').children,
-	function(e){return {name:e.innerText.toLowerCase(),path:"/"+e.innerText.toLowerCase()}}));
+	function(e){
+		var link = e.dataset.itemLink; 
+		return {name: link,path:"/"+link}}));
 
 	opts = {
 	  useHash: true,
@@ -11891,6 +11893,7 @@ request.send(); */
 
 	    // If no rules matched, throw an error (possible malformed path)
 	    if (!matched) {
+			 
 	        throw new Error('Could not parse path.');
 	    }
 	    // Return tokens
