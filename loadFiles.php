@@ -1,4 +1,5 @@
 <?php
+require_once(ABSPATH . 'wp-content/plugins/threejsviewer/config.php');
 function load_files()
 {
     $uploads = wp_upload_dir();
@@ -23,5 +24,14 @@ function load_files()
 
     }
     return $filesUpload;
+}
+function load_settings()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . TABLES[1];
+
+    $querystr = "SELECT *   FROM $table_name ";
+
+    return $wpdb->get_results($querystr, OBJECT);
 }
 

@@ -13,13 +13,13 @@
         document.querySelector('#cn-accept-cookie').addEventListener('click', function () {
             document.querySelector('#cookie-notice').style.display = 'none';
             document.querySelector('.copyright').style.bottom = '0px';
+            document.querySelector('.player').style.bottom = '20px';
         })
         document.addEventListener("DOMContentLoaded", function () {
             //document.querySelector('.copyright').style.bottom = '40px';
         });
     </script>
-    <style>
-
+    <style> 
         #cookie-notice {
             bottom: 0;
             position: fixed;

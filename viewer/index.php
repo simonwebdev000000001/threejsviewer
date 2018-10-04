@@ -43,7 +43,27 @@ require_once(ABSPATH . 'wp-content/plugins/threejsviewer/config.php');
     if (!$addedSomeFile) {
         echo "<li data-title=\"Empty\">$DEF_SOUUND</li>";
     }
+
+    $settings = load_settings();
+     $isWindows = $isAllBuildings=-1;
+     foreach($settings as $settItem){
+         $val = $settItem->value;
+         switch($settItem->type){
+             case 1:{
+                $isAllBuildings = $val;
+                 break;
+             }
+             case 2:{
+                $isWindows = $val;
+                 break;
+             }
+         } 
+     }
     ?>
+     <script>
+    <?php echo ($isAllBuildings==2?'window.urlParams.all =true;':'')?>
+    <?php echo ($isWindows==2?'window.urlParams.hasWindow =true;':'')?>
+    </script>
 </ul>
 <div class="canvas"></div>
 

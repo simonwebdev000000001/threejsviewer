@@ -31,8 +31,6 @@ if (!defined('FEEDIER_PATH'))
 class Threejsviewer
 {
 
-    static $TABLE_NAME = "viewer_menu";
-
     /**
      * Threejsviewer constructor.
      *
@@ -42,10 +40,11 @@ class Threejsviewer
     {
         add_action('admin_menu', 'test_plugin_setup_menu');
         add_filter('template_include', 'wpa3396_page_template', 99);
-        add_action('wp_ajax_my_ajax_action', 'my_ajax_action');
-        add_action('wp_ajax_delete_menu_item', 'delete_menu_item');
         add_action('admin_print_footer_scripts', 'my_action_javascript', 99);
 
+        add_action('wp_ajax_my_ajax_action', 'my_ajax_action');
+        add_action('wp_ajax_delete_menu_item', 'delete_menu_item');
+        add_action('wp_ajax_my_toggleViewerSettings', 'my_toggleViewerSettings');
 
         register_activation_hook(__FILE__, 'threejsviewer_activate');
 
@@ -96,7 +95,14 @@ function delete_menu_item()
 
     wp_die();
 }
+function my_toggleViewerSettings(){
+    global $wpdb; 
+    $table_name = $wpdb->prefix . TABLES[1];
 
+    $wpdb->query('UPDATE '.$table_name.' SET value='.$_POST['value'].' WHERE type='.$_POST['type']);
+ 
+    wp_die();
+}
 function my_action_javascript()
 { ?>
     <script type="text/javascript">
@@ -136,7 +142,7 @@ function threejsviewer_activate()
 {
     global $wpdb;
 
-    $table_name = $wpdb->prefix . Threejsviewer::$TABLE_NAME;
+    $table_name = $wpdb->prefix . TABLES[0];
 
     $charset_collate = $wpdb->get_charset_collate();
 
@@ -150,6 +156,25 @@ function threejsviewer_activate()
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
+
+    $table_name = $wpdb->prefix . TABLES[1]; 
+    $charset_collate = $wpdb->get_charset_collate(); 
+    $sql = "CREATE TABLE $table_name (
+    id mediumint(9) NOT NULL AUTO_INCREMENT,
+    createdAt datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+    type mediumint(9) NOT NULL,
+    value mediumint(9) NOT NULL,
+    PRIMARY KEY  (id)
+    ) $charset_collate;";
+ 
+    dbDelta($sql);
+      
+    $wpdb->query(
+        'DELETE  FROM ' . $table_name  
+    );
+    $wpdb->query(
+        'INSERT into '.$table_name.' (`type`, `value`) Values(1,1),(2,1)'
+    );  
 }
 
 function bl_add_routes($router)
@@ -256,10 +281,60 @@ function test_init()
     <h2>Upload a sound file(s),audio only</h2>
     <!-- Form to handle the upload - The enctype value here is very important -->
     <form method="post" enctype="multipart/form-data">
-        <input type='file' id='test_upload_sound' multiple accept="audio/*" name='test_upload_sound'></input>
+        <input type='file' id='test_upload_sound' multiple accept="audio/*" name='test_upload_sound'/>
         <?php submit_button('Upload') ?>
     </form>
 
+    <?php
+     $settings = load_settings();
+     $isWindows = $isAllBuildings=-1;
+     foreach($settings as $settItem){
+         $val = $settItem->value;
+         switch($settItem->type){
+             case 1:{
+                $isAllBuildings = $val;
+                 break;
+             }
+             case 2:{
+                $isWindows = $val;
+                 break;
+             }
+         } 
+     }
+
+
+    ?> 
+    <script>
+        function changeSetting(type,e){
+            $.ajax({
+                    url : ajaxurl, 
+                    data : {
+                        'action':'my_toggleViewerSettings',
+                        'type': type,
+                        'value':e.checked?2:1
+                    },
+                    method : 'POST',
+                    success : function( response ){  },
+                    error : function(error){ console.log(error) }
+                }) ; 
+        }
+    </script>
+     <hr/>
+    <h2>Viewer Settings</h2>
+     <form method="post"class="form-inline" enctype="multipart/form-data" name="settings_viewer">
+        <div class="form-inline">
+            <label  class="sr-only"for="is_all_buildings"> See all buildings</label>
+            <input class="form-control" <?php echo ($isAllBuildings==2?'checked':'');?> 
+            type='checkbox' id="is_all_buildings" name='isAllBuildings' onclick="changeSetting(1,this)"/> 
+        </div>
+        <div class="form-inline">
+            <label  class="sr-only"for="is_has_windows"> See with windows</label>
+            <input class="form-control" <?php echo ($isWindows==2?'checked':'');?> type='checkbox'
+             id="is_has_windows" name='is_has_windows' onclick="changeSetting(2,this)"/> 
+        </div>
+            
+    </form>
+    
     <?php $menuItems = load_Menu_Items();
     if (count($menuItems) > 0) {
         echo "

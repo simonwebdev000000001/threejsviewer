@@ -15,7 +15,7 @@
 
     <style>
         .player {
-            bottom: 20px;
+            bottom: 60px;
         }
 
         .copyright {
