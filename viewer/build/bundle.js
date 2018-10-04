@@ -4607,8 +4607,19 @@ if(child.type =='Mesh')city.add(child);
 };
 request.open('GET', 'assets/models/test3.obj');
 request.send(); */
-
-
+/*var materialTextured =three.materialGif= new THREE.MeshBasicMaterial( {
+	side:2,
+	transparent:true,
+	map: THREE.ImageUtils.loadTexture(
+		'wp-content/plugins/threejsviewer/viewer/assets/img/ezgif.com-resize.gif')
+});
+var geometry = new THREE.PlaneBufferGeometry( 5, 4, 1 ); 
+var plane = new THREE.Mesh( geometry, materialTextured );
+three.scene.add( plane );
+plane.position.y = 10;
+three.on('update',function(){
+	materialTextured.map.needsUpdate = true;
+});*/
                
                
 

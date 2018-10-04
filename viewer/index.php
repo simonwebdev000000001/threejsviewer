@@ -34,15 +34,14 @@ require_once(ABSPATH . 'wp-content/plugins/threejsviewer/config.php');
     <?php
     require_once(ABSPATH . 'wp-content/plugins/threejsviewer/loadFiles.php');
     $addedSomeFile = false;
-    foreach (load_files() as $_filePath) {
+    $items = load_files();
+    foreach ($items  as $_filePath) {
         $addedSomeFile = true;
         $fileName = explode("/", $_filePath);
         $fileName = explode(".", $fileName[count($fileName) - 1])[0];
         echo "<li data-title=" . $fileName . ">" . (get_site_url() . '/' . $_filePath) . "</li>";
     }
-    if (!$addedSomeFile) {
-        echo "<li data-title=\"Empty\">$DEF_SOUUND</li>";
-    }
+     
 
     $settings = load_settings();
      $isWindows = $isAllBuildings=-1;
@@ -60,11 +59,71 @@ require_once(ABSPATH . 'wp-content/plugins/threejsviewer/config.php');
          } 
      }
     ?>
-     <script>
-    <?php echo ($isAllBuildings==2?'window.urlParams.all =true;':'')?>
-    <?php echo ($isWindows==2?'window.urlParams.hasWindow =true;':'')?>
+     
+</ul> 
+    <script>
+        <?php echo ($isAllBuildings==2?'window.urlParams.all =true;':'')?>
+        <?php echo ($isWindows==2?'window.urlParams.hasWindow =true;':'')?>
+
+        setTimeout(() => {
+             
+            function TextureAnimator(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration) 
+                {	
+                    // note: texture passed by reference, will be updated by the update function.
+                        
+                    this.tilesHorizontal = tilesHoriz;
+                    this.tilesVertical = tilesVert;
+                    // how many images does this spritesheet contain?
+                    //  usually equals tilesHoriz * tilesVert, but not necessarily,
+                    //  if there at blank tiles at the bottom of the spritesheet. 
+                    this.numberOfTiles = numTiles;
+                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; 
+                    texture.repeat.set( 1 / this.tilesHorizontal, 1 / this.tilesVertical );
+
+                    // how long should each image be displayed?
+                    this.tileDisplayDuration = tileDispDuration;
+
+                    // how long has the current image been displayed?
+                    this.currentDisplayTime = 0;
+
+                    // which image is currently being displayed?
+                    this.currentTile = 0;
+                        
+                    this.update = function( milliSec )
+                    {
+                        this.currentDisplayTime += milliSec;
+                        while (this.currentDisplayTime > this.tileDisplayDuration)
+                        {
+                            this.currentDisplayTime -= this.tileDisplayDuration;
+                            this.currentTile++;
+                            if (this.currentTile == this.numberOfTiles)
+                                this.currentTile = 0;
+                            var currentColumn = this.currentTile % this.tilesHorizontal;
+                            texture.offset.x = currentColumn / this.tilesHorizontal;
+                            var currentRow = Math.floor( this.currentTile / this.tilesHorizontal );
+                            texture.offset.y = currentRow / this.tilesVertical;
+                        }
+                    };
+                }		
+           var runnerTexture = new THREE.ImageUtils.loadTexture( 'wp-content/plugins/threejsviewer/viewer/assets/img/merge_from_ofoct.png' );
+            var annie = new TextureAnimator( runnerTexture, 6, 1, 6, 175 ); // texture, #horiz, #vert, #total, duration.
+            var runnerMaterial = new THREE.MeshBasicMaterial( { 
+                map: runnerTexture, transparent:true,
+                side:THREE.DoubleSide } );
+            var runnerGeometry = new THREE.PlaneGeometry(5, 5, 1, 1);
+            var runner = new THREE.Mesh(runnerGeometry, runnerMaterial);
+            runner.position.y = 10;
+            //runner.position.set(-100,25,0);
+            var clock = new THREE.Clock();
+            three.scene.add(runner);
+            three.on('update',function(){
+                var delta = clock.getDelta(); 
+
+                annie.update(1000 * delta);
+            });
+
+        }, 5000);
     </script>
-</ul>
 <div class="canvas"></div>
 
 <div class="splash">
