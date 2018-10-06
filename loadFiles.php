@@ -1,6 +1,6 @@
 <?php
 require_once(ABSPATH . 'wp-content/plugins/threejsviewer/config.php');
-function load_files()
+function load_files($extension = null)
 {
     $uploads = wp_upload_dir();
 
@@ -11,11 +11,17 @@ function load_files()
     );
 
     $filesUpload = [];
-    $extensions = ['mp3'];
+    if (empty($extension)) {
+        $extensions = ['mp3'];
+    } else {
+        $extensions = ['jpg', 'jpeg', 'png'];
+    }
+
     foreach ($files as $file) {
+        $ext = strtolower($file->getExtension());
         if (
             !$file->isDir()
-            && is_numeric(array_search($file->getExtension(), $extensions))
+            && is_numeric(array_search($ext, $extensions))
         ) {
             $_filePath = "wp-content" . explode("wp-content", $file->getRealPath())[1];
             $filesUpload[] = $_filePath;
@@ -25,6 +31,7 @@ function load_files()
     }
     return $filesUpload;
 }
+
 function load_settings()
 {
     global $wpdb;

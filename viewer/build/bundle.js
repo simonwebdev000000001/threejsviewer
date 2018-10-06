@@ -10706,9 +10706,9 @@ three.on('update',function(){
 	    name: 'home',
 	    path: '/'
 	  }
-	].concat( [].map.call(document.querySelector('#menu_items').children,
+	].concat( [].map.call(document.querySelector('#listOfLinks').children,
 	function(e){
-		var link = e.dataset.itemLink; 
+		var link = e.innerText;//dataset.itemLink; 
 		return {name: link,path:"/"+link}}));
 
 	opts = {

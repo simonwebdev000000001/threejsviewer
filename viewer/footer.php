@@ -5,12 +5,23 @@
 
             <?php
             foreach ($menuLinks as $menuItem) {
-                echo "<li class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-12454\">";
-                echo "<a class=\"link " . strtolower($menuItem->link) . "\" href=\"#!/" . strtolower($menuItem->link) . "\">" . $menuItem->title . "</a>";
-                echo "</li>";
+                if ($menuItem->general === true || $menuItem->isFooter === true) {
+                    echo "<li class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-12454\">";
+                    echo "<a class=\"link " . strtolower($menuItem->link) . "\" href=\"#!/" . strtolower($menuItem->link) . "\">" . $menuItem->title . "</a>";
+                    echo "</li>";
+                }
+
             }
             ?>
         </ul>
+    </div>
+
+    <div style="display:none" id="listOfLinks">
+        <?php
+        foreach ($menuLinks as $menuItem) {
+            echo "<a>" . $menuItem->link . "</a>";
+        }
+        ?>
     </div>
 
     <style>
