@@ -131,15 +131,32 @@ require_once(ABSPATH . 'wp-content/plugins/threejsviewer/config.php');
         var clock = new THREE.Clock();
         three.scene.add(runner);
         runner.position.set(0, 10, 0);
-        //three.scene.children[0].children[232].add(runner);
+        let scene = new THREE.Scene();
+        scene.add(runner);
+        //three.scene.children[0].children[232].add(runner); 
+        let renderer = new THREE.WebGLRenderer({alpha :true}); 
+        renderer.setClearColor('#000000',0);
+        renderer.domElement.className = 'gl-view'; 
+        renderer.setSize(three.renderer.domElement.clientWidth,three.renderer.domElement.clientHeight);
+        three.renderer.domElement.parentNode.appendChild(renderer.domElement);
         three.on('update', function () {
             var delta = clock.getDelta();
 
             annie.update(1000 * delta);
+
+            renderer.render(scene,three.camera)
         });
 
     }, 5000);
 </script>
+<style>
+.gl-view{
+    position:absolute;
+    z-index:0;
+    pointer-events: none;
+    top: 0;
+}
+</style>
 <div class="canvas"></div>
 
 <div class="splash">
@@ -254,6 +271,7 @@ require 'header.php'; ?>
             <?php
 
             foreach ($menuLinks as $menuItem) {
+                if($menuItem->noContent)continue;
                 echo "
                   <section id=\"" . ($menuItem->link) . "\">
                   <div class=\"body\">" . stripslashes($menuItem->content) . "</div>

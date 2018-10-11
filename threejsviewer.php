@@ -240,7 +240,7 @@ function bl_new_demo_route_callback()
 
 function wpa3396_page_template($page_template)
 {
-    if (is_page('my-custom-page-slug') || true) {
+    if (is_page('my-custom-page-slug') || is_home()) {
         $page_template = dirname(__FILE__) . '/viewer/index.php';
     }
     return $page_template;
@@ -286,11 +286,11 @@ function vm_the_content($content)
 
 function test_plugin_setup_menu()
 {
-    add_menu_page('Threejs Viewer Page', 'Threejs Viewer', 'manage_options', 'threejs-viewer-plugin', 'test_init');
+    add_menu_page('Threejs Viewer Page', 'Threejs Viewer', 'manage_options', 'threejs-viewer-plugin', 'on_init_admin');
 }
 
 
-function test_init()
+function on_init_admin()
 {
     require_once(ABSPATH . 'wp-content/plugins/threejsviewer/loadFiles.php');
     require_once(ABSPATH . 'wp-content/plugins/threejsviewer/viewer/listOfMenuItems.php');
@@ -437,7 +437,7 @@ function test_init()
             if (count($menuItems) == 0) {
                 echo "<dd>You don`t hav any menu items attached</dd>";
             } else {
-
+ 
                 foreach ($menuItems as $keyI => $menuI) {
                     $content = null;
                     foreach ($menuWordPressItems as $menuWP) {
@@ -446,11 +446,11 @@ function test_init()
                             break;
                         }
                     }
-                    echo "<dd>" . $menuI->title . "<button onclick=\"openModalToEditMenuContent(" . $menuI->ID . ")\">Apply Content</button>";
+                    echo "<dd><a href=\"". $menuI->url."\" target=\"_blank\" aria-label=\"Read more about Seminole tax hike\" >" . $menuI->title . "</a> <button onclick=\"openModalToEditMenuContent(" . $menuI->ID . ")\">Apply Content</button>";
                     if (!empty($content)) {
                         echo " <button onclick=updateContent(this)>View Content<div style=\"display:none\">" . $content . "</div></button>";
                     } else {
-                        echo " <span>This menu will not be available in viewer, please apply some content to see it in viewer</span>";
+                        echo " <span>This menu item will use native link from worpress setting, apply some content if you want to use content instead of link</span>";
                     }
                     echo "</dd>";
                 }

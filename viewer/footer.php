@@ -7,7 +7,13 @@
             foreach ($menuLinks as $menuItem) {
                 if ($menuItem->general === true || $menuItem->isFooter === true) {
                     echo "<li class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-12454\">";
+                   
+                   if($menuItem->url){
+                    echo "<a class=\"link\"  target=\"_blank\" href=\"" . $menuItem->url . "\">" . $menuItem->title . "</a>";
+                   }else{
                     echo "<a class=\"link " . strtolower($menuItem->link) . "\" href=\"#!/" . strtolower($menuItem->link) . "\">" . $menuItem->title . "</a>";
+                   }
+                   
                     echo "</li>";
                 }
 
@@ -19,6 +25,7 @@
     <div style="display:none" id="listOfLinks">
         <?php
         foreach ($menuLinks as $menuItem) {
+            if($menuItem->noContent)continue;
             echo "<a>" . $menuItem->link . "</a>";
         }
         ?>

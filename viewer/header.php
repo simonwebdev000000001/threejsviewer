@@ -59,14 +59,18 @@
                 );
                 $menuNavItems = wp_get_nav_menu_items($selectedMenu->term_id, $args);
                 if (count($menuNavItems) == 0) {
+                    
 
                 } else {
-                    foreach ($menuNavItems as $keyI => $menuI) {
-                        foreach ($menuWordPressItems as $menuWP) {
+                    $isSocial = $key == 'social';
+                    $isTop = $key == 'top';
+                    foreach ($menuNavItems as $keyI => $menuI) { 
+                        $noContent=true;
+                        foreach ($menuWordPressItems as $keyMenu=>$menuWP) {
                             if ($menuWP->menuId == $menuI->ID) {
                                 $_link = 'view' . ($menuItemsCounter++ + 1);// $link ;
                                 $menuLinks[] = (object)[
-                                    'isFooter' => $key == 'social',
+                                    'isFooter' => $isSocial,
                                     'link' => $_link,
                                     'title' => $menuI->title,
                                     'content' => $menuWP->content
@@ -76,10 +80,22 @@
 
                                 }
 
+                                $noContent=false;
+                                 array_splice($menuWordPressItems, $key, 1); 
+                                break;
                             }
+                        } 
+                        if($noContent ){
+                            $menuLinks[] = (object)[
+                                'isFooter' =>$isSocial,
+                                'noContent' => true,
+                                'title' => $menuI->title,
+                                'url' => $menuI->url
+                            ];
+                            if( $isTop)echo "<a class=\"link\"    href=\"" . $menuI->url . "\">" . $menuI->title . "</a>";
                         }
 
-                    }
+                    } 
                 }
             }
         }
